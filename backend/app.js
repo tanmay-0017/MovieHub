@@ -8,6 +8,8 @@ app.use(cors({
     credentials: true
 }))
 
+app.use(express.json());        // to parse JSON bodies
+
 // routes import 
 
 import userRouter from './routes/user.routes.js';

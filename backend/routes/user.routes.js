@@ -4,6 +4,9 @@ import {loginUser, registerUser} from '../controllers/user.controller.js'
 
 const app = express();
 
+// Middleware
+app.use(express.json());
+
 
 // Routes 
 

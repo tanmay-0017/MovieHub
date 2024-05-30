@@ -1,10 +1,10 @@
-import { Mongoose, Schema } from "mongoose";
+import mongoose , { Schema } from "mongoose";
 // import { type } from "os";
 
 const movieSchema = new Schema({
     userId:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: User,
+        ref: "User",
         required: true
     },
     name: {
@@ -20,4 +20,4 @@ const movieSchema = new Schema({
     }
 })
 
-export const Movie = Mongoose.model("Movie", movieSchema);
+export const Movie = mongoose.model("Movie", movieSchema);

@@ -1,20 +1,22 @@
 import { User } from "../models/user.model.js";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-
+import bcrypt from "bcrypt";
+import {asyncHandler} from "../utils/asyncHandler.js";
+import {ApiError} from "../utils/ApiError.js";
 
 const registerUser = asyncHandler( async (req, res) => {
 
     const {username, password} = req.body;
-
-    if ([username, password].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required")
-    }
     
-    const existingUser = User.findOne({username})
+    if ([username, password].some((field) => (typeof field === 'string' && field.trim() === ""))) {
+        throw new ApiError(400, "All fields are required");
+    }    
+    
+    const existingUser = await User.findOne({username})
     
     if (existingUser){
-        throw new error(409, "User with username already exists")
+        throw new ApiError(409, "User with username already exists")
     }
     
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,12 +37,12 @@ const loginUser = asyncHandler(async(req, res) => {
     const {username, password} = req.body;
 
     if (!username) {
-        throw new error("username is required");
+        throw new ApiError("username is required");
     }
 
-    const user = User.findOne({username});
+    const user = await User.findOne({username});
     if (!user) {
-        throw new error("User does not exist")
+        throw new ApiError("User does not exist")
     }
 
     if (user && await bcrypt.compare(password, user.password)) {

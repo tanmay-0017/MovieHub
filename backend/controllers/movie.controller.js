@@ -1,12 +1,16 @@
-import { Movie } from "../models/movie.model.js";
-import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import axios from 'axios';
 
-
-const searchMovie = asyncHandler(async(req, res) => {
+const searchMovie = asyncHandler(async (req, res) => {
     const { title } = req.query;
-    const response = await axios.get(`http://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&s=${title}`);
-    res.json(response.data);
-})
+    const apiKey = process.env.OMDB_API_KEY;
 
-export {searchMovie}
+    if (!title) {
+        return res.status(400).send('Title query parameter is required');
+    }
+
+    const response = await axios.get(`http://www.omdbapi.com/?apikey=${apiKey}&s=${title}`);
+    res.send(response.data);
+});
+
+export { searchMovie };
