@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { searchMovie } from '../services/movieService';
+import axios from 'axios';
 
 const SearchMovie = () => {
     const [title, setTitle] = useState('');
-    const [results, setResults] = useState([]);
+    const [movies, setMovies] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -12,10 +12,10 @@ const SearchMovie = () => {
         setLoading(true);
         setError('');
         try {
-            const data = await searchMovie(title);
-            setResults(data.Search);
+            const response = await axios.post('http://localhost:3000/search', { title });
+            setMovies(response.data.Search || []);
         } catch (err) {
-            setError(err);
+            setError(err.response?.data?.message || 'Error searching for movies');
         } finally {
             setLoading(false);
         }
@@ -23,20 +23,28 @@ const SearchMovie = () => {
 
     return (
         <div>
-            <h2>Search Movie</h2>
+            <h2>Search Movies</h2>
             <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="Movie Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                <input
+                    type="text"
+                    placeholder="Movie Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                />
                 <button type="submit" disabled={loading}>Search</button>
+                {loading && <p>Loading...</p>}
+                {error && <p style={{ color: 'red' }}>{error}</p>}
             </form>
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {results && results.length > 0 && (
-                <ul>
-                    {results.map((movie) => (
-                        <li key={movie.imdbID}>{movie.Title} ({movie.Year})</li>
-                    ))}
-                </ul>
-            )}
+            <div>
+                {movies.map((movie) => (
+                    <div key={movie.imdbID}>
+                        <h3>{movie.Title}</h3>
+                        <p>{movie.Year}</p>
+                        <img src={movie.Poster} alt={movie.Title} />
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
