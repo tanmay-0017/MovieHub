@@ -1,13 +1,13 @@
-import React, { useState, useHistory } from 'react';
+import React, { useState } from 'react';
 import { loginUser } from '../services/authService';
-// import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,9 +15,9 @@ const Login = () => {
         setError('');
         try {
             await loginUser({ username, password });
-            history.push('/search');
+            navigate('/search');
         } catch (err) {
-            setError(err);
+            setError(err.message || 'Error logging in');
         } finally {
             setLoading(false);
         }
