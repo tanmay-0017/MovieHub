@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { getToken } from '../services/authService';
 
 const SearchMovie = () => {
     const [title, setTitle] = useState('');
@@ -12,7 +13,17 @@ const SearchMovie = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.post('http://localhost:3000/search', { title });
+            const token = getToken(); // Get the token from localStorage
+            const response = await axios.post(
+                'http://localhost:3000/movie/search',
+                { title },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include the token in the headers
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
             setMovies(response.data.Search || []);
         } catch (err) {
             setError(err.response?.data?.message || 'Error searching for movies');
