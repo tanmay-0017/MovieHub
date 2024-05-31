@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import axios from 'axios';
 
 const searchMovie = asyncHandler(async (req, res) => {
-    const { title } = req.query;
+    const { title } = req.body;
     const apiKey = process.env.OMDB_API_KEY;
 
     if (!title) {
