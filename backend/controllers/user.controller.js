@@ -1,7 +1,7 @@
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 
@@ -44,6 +44,11 @@ const loginUser = asyncHandler(async(req, res) => {
     if (!user) {
         throw new ApiError("User does not exist")
     }
+
+    // const hashh = await bcrypt.hash(password, 10);
+    // res.send(hashh);                        // $2b$10$GhRVgCTvNyIxwm1zLB9VwOkv3hmQs6Y6VgHDOjpkPFo3HHFoJ774u
+
+    // res.send(user.password);            // $2b$10$HcWjsz7gaAzgIUZffIPaN.5wlw3QhFi4e64FIAHa9X6NPC6q1qQZa
 
     if (user && await bcrypt.compare(password, user.password)) {
         const token = jwt.sign({
